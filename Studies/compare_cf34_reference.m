@@ -15,7 +15,7 @@ addpath(fullfile(projectRoot, "Functions"));
 cfg = baseline_engine();
 ref = cf34_10e_reference();
 
-caseTag = "cf34_precalibration";
+caseTag = "cf34_reference_comparison";
 
 %% Create matching Data and Figures run folders
 runOutput = create_run_output_folders( ...
@@ -33,7 +33,7 @@ commandWindowPath = fullfile( ...
 diary(char(commandWindowPath));
 
 try
-    fprintf("\nCF34-10E pre-calibration comparison started\n");
+    fprintf("\nCF34-10E reference comparison started\n");
     fprintf("==================================================\n");
     fprintf("Model version: %s\n", runOutput.version_tag);
     fprintf("Run number:    %02d\n", runOutput.run_number);
@@ -193,7 +193,7 @@ try
         "runOutput");
 
     %% Summary
-    fprintf("Pre-calibration summary\n");
+    fprintf("Reference comparison summary\n");
     fprintf("--------------------------------------------------\n");
     fprintf("Model thrust:       %.3f kN\n", ...
         modelThrust_N / 1000);
@@ -221,7 +221,7 @@ try
     fprintf("Architecture CSV:   %s\n", architectureCsvPath);
     fprintf("Command log:        %s\n", commandWindowPath);
     fprintf("==================================================\n");
-    fprintf("CF34-10E pre-calibration comparison complete\n\n");
+    fprintf("CF34-10E reference comparison complete\n\n");
 
     diary off;
 

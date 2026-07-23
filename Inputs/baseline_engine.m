@@ -16,10 +16,20 @@ cfg.meta.reference_engine = ...
     "GE CF34-10E class";
 
 cfg.meta.calibration_status = ...
-    "Pre-calibration public-data comparison";
+    "Core airflow calibrated to public CF34-10E7 sea-level-static thrust";
 
 cfg.meta.model_scope = ...
     "Public-data-calibrated notional model; not an exact proprietary reproduction";
+
+%% Reference-engine architecture
+% Public CF34-10E architecture used to interpret the lumped components.
+cfg.architecture.spool_count = 2;
+
+cfg.architecture.fan_stage_count = 1;
+cfg.architecture.lpc_stage_count = 3;
+cfg.architecture.hpc_stage_count = 9;
+cfg.architecture.hpt_stage_count = 1;
+cfg.architecture.lpt_stage_count = 4;
 
 %% Flight condition
 cfg.flight.altitude_m = 0;
@@ -38,15 +48,36 @@ cfg.thermo.cp_hot_J_kgK = ...
     cfg.thermo.gamma_hot * cfg.thermo.R_J_kgK / ...
     (cfg.thermo.gamma_hot - 1);
 
-%% Engine architecture — provisional values
-cfg.engine.core_airflow_kg_s = 45;
-cfg.engine.bypass_ratio = 5.0;
+%% Engine cycle parameters
+% Core airflow calibrated to reproduce the public CF34-10E7
+% maximum-takeoff sea-level-static thrust target.
+%
+% This is a model calibration result, not a publicly reported CF34 value.
+cfg.engine.core_airflow_kg_s = 43.03;
 
+% Public CF34-10E bypass ratio.
+cfg.engine.bypass_ratio = 5.4;
+
+% Public maximum overall pressure ratio.
+cfg.engine.target_overall_pressure_ratio = 29.0;
+
+% The individual component pressure-ratio split is not publicly verified.
+% Fan and LPC pressure ratios remain assumptions; HPC pressure ratio is
+% calculated so their product exactly satisfies the public overall ratio.
 cfg.engine.fan_pressure_ratio = 1.60;
 cfg.engine.lpc_pressure_ratio = 1.80;
-cfg.engine.hpc_pressure_ratio = 10.0;
 
-cfg.engine.turbine_inlet_temperature_K = 1600;
+cfg.engine.hpc_pressure_ratio = ...
+    cfg.engine.target_overall_pressure_ratio ...
+    / (cfg.engine.fan_pressure_ratio ...
+    * cfg.engine.lpc_pressure_ratio);
+
+% Modeled combustor exit temperature; not a publicly reported CF34 value.
+cfg.engine.combustor_exit_temperature_K = 1600;
+
+% Temporary legacy alias while existing scripts are being renamed.
+cfg.engine.turbine_inlet_temperature_K = ...
+    cfg.engine.combustor_exit_temperature_K;
 
 %% Component efficiencies
 cfg.eff.diffuser_pressure_recovery = 0.995;
@@ -99,9 +130,18 @@ cfg.cooling.bleed_fraction = 0.05;
 % This correlation will be refined or justified using public literature.
 cfg.loss.cooling_mixer_loss_coefficient = 1.0;
 
-%% Shaft speeds — provisional bridge inputs
-cfg.shaft.high_spool_rpm = 12000;
-cfg.shaft.low_spool_rpm = 4000;
+%% Shaft speeds
+% Public maximum-takeoff permissible CF34-10E rotor speeds from the EASA
+% type-certificate data sheet. These affect preliminary mean-line sizing,
+% but not the thermodynamic cycle calculation.
+cfg.shaft.high_spool_rpm = 18018;
+cfg.shaft.low_spool_rpm = 6325;
+
+cfg.shaft.speed_source = ...
+    "EASA TCDS maximum-takeoff permissible rotor speeds";
+
+cfg.shaft.speed_status = ...
+    "Provisional mean-line sizing inputs";
 
 %% Preliminary HPT stage-design assumptions
 % These are provisional mean-line design parameters. They will be refined
