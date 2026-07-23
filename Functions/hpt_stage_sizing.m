@@ -1,0 +1,256 @@
+function stage = hpt_stage_sizing( ...
+    inlet, outlet, mdotGas, shaftSpeed_rpm, ...
+    cp, gamma, R, stageCount, ...
+    loadingCoefficient, flowCoefficient, reaction)
+%HPT_STAGE_SIZING Preliminary mean-line sizing of an axial HPT.
+%
+% Definitions:
+%
+%   psi = delta_h0 / U^2
+%   phi = Vx / U
+%
+% The model assumes:
+%   - Constant mean radius
+%   - Constant axial velocity through the rotor
+%   - Equal stage work split if multiple stages are specified
+%   - Idealized mean-line velocity triangles
+%
+% Inputs:
+%   inlet               HPT inlet total state
+%   outlet              HPT outlet total state
+%   mdotGas             HPT gas mass flow, kg/s
+%   shaftSpeed_rpm      High-spool speed, rpm
+%   cp                  Hot-gas specific heat, J/(kg*K)
+%   gamma               Hot-gas specific heat ratio
+%   R                   Hot-gas specific gas constant, J/(kg*K)
+%   stageCount          Number of HPT stages
+%   loadingCoefficient Stage loading coefficient, psi
+%   flowCoefficient    Flow coefficient, phi
+%   reaction            Degree of reaction
+%
+% Output:
+%   stage               Preliminary HPT geometry and velocity triangles
+
+%% Input validation
+validateattributes(mdotGas, {'numeric'}, ...
+    {'scalar', 'real', 'finite', 'positive'});
+
+validateattributes(shaftSpeed_rpm, {'numeric'}, ...
+    {'scalar', 'real', 'finite', 'positive'});
+
+validateattributes(stageCount, {'numeric'}, ...
+    {'scalar', 'integer', 'positive'});
+
+validateattributes(loadingCoefficient, {'numeric'}, ...
+    {'scalar', 'real', 'finite', 'positive'});
+
+validateattributes(flowCoefficient, {'numeric'}, ...
+    {'scalar', 'real', 'finite', 'positive'});
+
+validateattributes(reaction, {'numeric'}, ...
+    {'scalar', 'real', 'finite', '>=', 0, '<=', 1});
+
+%% HPT work
+totalSpecificWork_J_kg = ...
+    cp * (inlet.Tt_K - outlet.Tt_K);
+
+if totalSpecificWork_J_kg <= 0
+    error("HPT outlet temperature must be below its inlet temperature.");
+end
+
+specificWorkPerStage_J_kg = ...
+    totalSpecificWork_J_kg / stageCount;
+
+%% Mean blade speed and radius
+bladeSpeed_m_s = sqrt( ...
+    specificWorkPerStage_J_kg / loadingCoefficient);
+
+omega_rad_s = ...
+    2 * pi * shaftSpeed_rpm / 60;
+
+meanRadius_m = ...
+    bladeSpeed_m_s / omega_rad_s;
+
+%% Axial velocity
+axialVelocity_m_s = ...
+    flowCoefficient * bladeSpeed_m_s;
+
+%% Mean-line velocity triangles
+%
+% For constant axial velocity:
+%
+% Ctheta1 - Ctheta2 = psi*U
+%
+% Reaction relation:
+%
+% Ctheta1 + Ctheta2 = 2*U*(1 - R)
+
+Ctheta1_m_s = bladeSpeed_m_s * ...
+    (1 - reaction + loadingCoefficient / 2);
+
+Ctheta2_m_s = bladeSpeed_m_s * ...
+    (1 - reaction - loadingCoefficient / 2);
+
+Wtheta1_m_s = ...
+    Ctheta1_m_s - bladeSpeed_m_s;
+
+Wtheta2_m_s = ...
+    Ctheta2_m_s - bladeSpeed_m_s;
+
+absoluteVelocity1_m_s = hypot( ...
+    axialVelocity_m_s, Ctheta1_m_s);
+
+absoluteVelocity2_m_s = hypot( ...
+    axialVelocity_m_s, Ctheta2_m_s);
+
+relativeVelocity1_m_s = hypot( ...
+    axialVelocity_m_s, Wtheta1_m_s);
+
+relativeVelocity2_m_s = hypot( ...
+    axialVelocity_m_s, Wtheta2_m_s);
+
+%% Flow angles
+alpha1_deg = atan2d( ...
+    Ctheta1_m_s, axialVelocity_m_s);
+
+alpha2_deg = atan2d( ...
+    Ctheta2_m_s, axialVelocity_m_s);
+
+beta1_deg = atan2d( ...
+    Wtheta1_m_s, axialVelocity_m_s);
+
+beta2_deg = atan2d( ...
+    Wtheta2_m_s, axialVelocity_m_s);
+
+%% Rotor-inlet static conditions
+T1_K = inlet.Tt_K - ...
+    absoluteVelocity1_m_s^2 / (2 * cp);
+
+if T1_K <= 0
+    error("Calculated HPT rotor-inlet static temperature is nonphysical.");
+end
+
+P1_Pa = inlet.Pt_Pa * ...
+    (T1_K / inlet.Tt_K)^(gamma / (gamma - 1));
+
+rho1_kg_m3 = ...
+    P1_Pa / (R * T1_K);
+
+%% Rotor-exit static conditions
+T2_K = outlet.Tt_K - ...
+    absoluteVelocity2_m_s^2 / (2 * cp);
+
+if T2_K <= 0
+    error("Calculated HPT rotor-exit static temperature is nonphysical.");
+end
+
+P2_Pa = outlet.Pt_Pa * ...
+    (T2_K / outlet.Tt_K)^(gamma / (gamma - 1));
+
+rho2_kg_m3 = ...
+    P2_Pa / (R * T2_K);
+
+%% Annulus sizing
+annulusAreaInlet_m2 = ...
+    mdotGas / (rho1_kg_m3 * axialVelocity_m_s);
+
+annulusAreaExit_m2 = ...
+    mdotGas / (rho2_kg_m3 * axialVelocity_m_s);
+
+% A = pi*(rt^2-rh^2) = 2*pi*rm*h
+bladeSpanInlet_m = ...
+    annulusAreaInlet_m2 / (2 * pi * meanRadius_m);
+
+bladeSpanExit_m = ...
+    annulusAreaExit_m2 / (2 * pi * meanRadius_m);
+
+hubRadiusInlet_m = ...
+    meanRadius_m - bladeSpanInlet_m / 2;
+
+tipRadiusInlet_m = ...
+    meanRadius_m + bladeSpanInlet_m / 2;
+
+hubRadiusExit_m = ...
+    meanRadius_m - bladeSpanExit_m / 2;
+
+tipRadiusExit_m = ...
+    meanRadius_m + bladeSpanExit_m / 2;
+
+if hubRadiusInlet_m <= 0 || hubRadiusExit_m <= 0
+    error("Calculated HPT hub radius is nonphysical.");
+end
+
+%% Approximate rotor pressure loading
+staticPressureDrop_Pa = ...
+    P1_Pa - P2_Pa;
+
+%% Package outputs
+stage.stage_count = stageCount;
+
+stage.loading_coefficient = loadingCoefficient;
+stage.flow_coefficient = flowCoefficient;
+stage.reaction = reaction;
+
+stage.shaft_speed_rpm = shaftSpeed_rpm;
+stage.omega_rad_s = omega_rad_s;
+
+stage.total_specific_work_J_kg = ...
+    totalSpecificWork_J_kg;
+
+stage.specific_work_per_stage_J_kg = ...
+    specificWorkPerStage_J_kg;
+
+stage.blade_speed_m_s = bladeSpeed_m_s;
+stage.axial_velocity_m_s = axialVelocity_m_s;
+
+stage.mean_radius_m = meanRadius_m;
+
+stage.annulus_area_inlet_m2 = ...
+    annulusAreaInlet_m2;
+
+stage.annulus_area_exit_m2 = ...
+    annulusAreaExit_m2;
+
+stage.blade_span_inlet_m = bladeSpanInlet_m;
+stage.blade_span_exit_m = bladeSpanExit_m;
+
+stage.hub_radius_inlet_m = hubRadiusInlet_m;
+stage.tip_radius_inlet_m = tipRadiusInlet_m;
+
+stage.hub_radius_exit_m = hubRadiusExit_m;
+stage.tip_radius_exit_m = tipRadiusExit_m;
+
+stage.Ctheta1_m_s = Ctheta1_m_s;
+stage.Ctheta2_m_s = Ctheta2_m_s;
+
+stage.Wtheta1_m_s = Wtheta1_m_s;
+stage.Wtheta2_m_s = Wtheta2_m_s;
+
+stage.absolute_velocity1_m_s = ...
+    absoluteVelocity1_m_s;
+
+stage.absolute_velocity2_m_s = ...
+    absoluteVelocity2_m_s;
+
+stage.relative_velocity1_m_s = ...
+    relativeVelocity1_m_s;
+
+stage.relative_velocity2_m_s = ...
+    relativeVelocity2_m_s;
+
+stage.alpha1_deg = alpha1_deg;
+stage.alpha2_deg = alpha2_deg;
+stage.beta1_deg = beta1_deg;
+stage.beta2_deg = beta2_deg;
+
+stage.rotor_inlet_static_temperature_K = T1_K;
+stage.rotor_inlet_static_pressure_Pa = P1_Pa;
+stage.rotor_inlet_density_kg_m3 = rho1_kg_m3;
+
+stage.rotor_exit_static_temperature_K = T2_K;
+stage.rotor_exit_static_pressure_Pa = P2_Pa;
+stage.rotor_exit_density_kg_m3 = rho2_kg_m3;
+
+stage.static_pressure_drop_Pa = staticPressureDrop_Pa;
+
+end

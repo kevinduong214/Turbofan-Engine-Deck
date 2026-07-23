@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# MATLAB temporary and autosave files
+*.asv
+*.m~
+*.autosave
+*.tmp
+
+# Generated model outputs
+Data/
+Figures/
+
+# MATLAB generated folders
+slprj/
+codegen/
+
+# Editor settings
+.vscode/
+.idea/
+
+# Additional macOS metadata
+Icon?
+._*
