@@ -4,9 +4,22 @@ function cfg = baseline_engine()
 % literature before final analysis.
 
 %% Metadata
-cfg.meta.name = "Notional two-spool separate-flow turbofan";
-cfg.meta.model_version = "0.4";
-cfg.meta.condition = "Sea-level static";
+cfg.meta.name = ...
+    "Notional CF34-10E-class two-spool separate-flow turbofan";
+
+cfg.meta.model_version = "0.5";
+
+cfg.meta.condition = ...
+    "Sea-level static";
+
+cfg.meta.reference_engine = ...
+    "GE CF34-10E class";
+
+cfg.meta.calibration_status = ...
+    "Pre-calibration public-data comparison";
+
+cfg.meta.model_scope = ...
+    "Public-data-calibrated notional model; not an exact proprietary reproduction";
 
 %% Flight condition
 cfg.flight.altitude_m = 0;
