@@ -147,7 +147,8 @@ cfg.shaft.speed_status = ...
 % These are provisional mean-line design parameters. They will be refined
 % and justified using public turbine-design literature in the report.
 
-cfg.hpt.stage_count = 1;
+cfg.hpt.stage_count = ...
+cfg.architecture.hpt_stage_count;
 
 % Stage loading coefficient:
 % psi = delta_h0 / U^2

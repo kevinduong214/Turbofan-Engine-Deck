@@ -37,7 +37,7 @@ try
     fprintf("==================================================\n");
     fprintf("Model version: %s\n", runOutput.version_tag);
     fprintf("Run number:    %02d\n", runOutput.run_number);
-    fprintf("Reference:     %s\n", ref.metadata.engine_model);
+    fprintf("Reference:     %s\n", ref.metadata.calibration_variant);
     fprintf("Data folder:   %s\n\n", runOutput.data_folder);
 
     %% Save exact comparison inputs
@@ -133,7 +133,7 @@ try
 
     referenceStageCount = [
         ref.architecture.fan_stage_count
-        ref.architecture.booster_stage_count
+        ref.architecture.lpc_stage_count
         ref.architecture.hpc_stage_count
         ref.architecture.hpt_stage_count
         ref.architecture.lpt_stage_count
