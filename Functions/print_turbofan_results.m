@@ -10,6 +10,18 @@ perf = results.performance;
 
 fprintf("\n%s\n", cfg.meta.name);
 fprintf("Model version: %s\n", cfg.meta.model_version);
+
+if isfield(results, "operating_point")
+    fprintf("Operating point:      %s\n", ...
+        char(results.operating_point.name));
+
+    fprintf("Calibration role:     %s\n", ...
+        char(results.operating_point.calibration_role));
+
+    fprintf("Ambient source:       %s\n", ...
+        char(results.atm.source));
+end
+
 fprintf("--------------------------------------------------\n");
 fprintf("Altitude:             %.0f m\n", cfg.flight.altitude_m);
 fprintf("Flight Mach number:   %.2f\n", cfg.flight.Mach);
@@ -19,6 +31,8 @@ fprintf("Flight velocity:      %.2f m/s\n", s.station0.velocity_m_s);
 fprintf("Core airflow:         %.2f kg/s\n", m.mdot_core_air_kg_s);
 fprintf("Bypass airflow:       %.2f kg/s\n", m.mdot_bypass_air_kg_s);
 fprintf("Total airflow:        %.2f kg/s\n\n", m.mdot_total_air_kg_s);
+
+
 
 %% Station table
 stationName = ...
@@ -303,5 +317,15 @@ fprintf("LPC power required:       %.3f MW\n", p.lpc_W / 1e6);
 fprintf("HPC power required:       %.3f MW\n", p.hpc_W / 1e6);
 fprintf("Total compression:        %.3f MW\n\n", ...
     p.total_compression_W / 1e6);
+
+if isfield(results.residuals, ...
+        "core_nozzle_capacity_kg_s")
+
+    fprintf("Core nozzle capacity residual:   %.9f kg/s\n", ...
+        results.residuals.core_nozzle_capacity_kg_s);
+
+    fprintf("Bypass nozzle capacity residual: %.9f kg/s\n", ...
+        results.residuals.bypass_nozzle_capacity_kg_s);
+end
 
 end

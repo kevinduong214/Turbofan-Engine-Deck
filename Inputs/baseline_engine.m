@@ -7,19 +7,23 @@ function cfg = baseline_engine()
 cfg.meta.name = ...
     "Notional CF34-10E-class two-spool separate-flow turbofan";
 
-cfg.meta.model_version = "0.5";
+cfg.meta.model_version = ...
+    "0.6-dev";
 
 cfg.meta.condition = ...
-    "Sea-level static";
+    "Maximum-takeoff APR design point, sea-level static";
 
 cfg.meta.reference_engine = ...
     "GE CF34-10E class";
 
 cfg.meta.calibration_status = ...
-    "Core airflow calibrated to public CF34-10E7 sea-level-static thrust";
+    "v0.5 APR calibration retained; multi-point calibration in progress";
 
 cfg.meta.model_scope = ...
     "Public-data-calibrated notional model; not an exact proprietary reproduction";
+
+cfg.meta.development_branch = ...
+    "cf34-10e-multipoint-calibration";
 
 %% Reference-engine architecture
 % Public CF34-10E architecture used to interpret the lumped components.
@@ -31,9 +35,10 @@ cfg.architecture.hpc_stage_count = 9;
 cfg.architecture.hpt_stage_count = 1;
 cfg.architecture.lpt_stage_count = 4;
 
-%% Flight condition
-cfg.flight.altitude_m = 0;
-cfg.flight.Mach = 0.0;
+%% Active operating point
+cfg = apply_cf34_operating_point( ...
+    cfg, ...
+    "maximum_takeoff_apr");
 
 %% Working-fluid assumptions
 cfg.thermo.R_J_kgK = 287.05;
@@ -47,6 +52,16 @@ cfg.thermo.gamma_hot = 1.33;
 cfg.thermo.cp_hot_J_kgK = ...
     cfg.thermo.gamma_hot * cfg.thermo.R_J_kgK / ...
     (cfg.thermo.gamma_hot - 1);
+
+%% Corrected-parameter reference state
+cfg.reference.temperature_K = ...
+    288.15;
+
+cfg.reference.pressure_Pa = ...
+    101325;
+
+cfg.reference.description = ...
+    "Standard-day reference for dimensional corrected flow and speed";
 
 %% Engine cycle parameters
 % Core airflow calibrated to reproduce the public CF34-10E7
@@ -92,6 +107,21 @@ cfg.eff.lpt_isentropic = 0.92;
 % Losses are represented as reductions in available nozzle total pressure.
 cfg.loss.core_nozzle_pressure_recovery = 0.98;
 cfg.loss.bypass_nozzle_pressure_recovery = 0.98;
+
+%% Fixed physical nozzle geometry
+% Areas captured from the calibrated maximum-takeoff APR design point.
+% These are model-derived geometry values, not publicly reported CF34 data.
+cfg.geometry.core_nozzle_area_m2 = ...
+    0.157305086;
+
+cfg.geometry.bypass_nozzle_area_m2 = ...
+    0.693714887;
+
+cfg.geometry.nozzle_area_source = ...
+    "Captured from calibrated v0.6-dev APR design point";
+
+cfg.geometry.nozzle_area_status = ...
+    "Fixed geometry for future off-design matching";
 
 %% Mechanical efficiencies
 cfg.mech.hpt = 0.99;
