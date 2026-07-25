@@ -150,15 +150,18 @@ cfg.shaft.speed_status = ...
 cfg.hpt.stage_count = ...
 cfg.architecture.hpt_stage_count;
 
-% Stage loading coefficient:
-% psi = delta_h0 / U^2
-cfg.hpt.loading_coefficient = 1.80;
-
-% Flow coefficient:
-% phi = Vx / U
-cfg.hpt.flow_coefficient = 0.65;
-
-% Degree of reaction
+% Preliminary one-stage HPT mean-line design selected through a
+% psi-phi design-space sweep and 54-scenario sensitivity analysis.
+%
+% These are modeled design coefficients, not publicly reported CF34 data.
+cfg.hpt.loading_coefficient = 1.20;
+cfg.hpt.flow_coefficient = 0.45;
 cfg.hpt.reaction = 0.50;
+
+cfg.hpt.design_status = ...
+    "Preliminary v0.5 mean-line design";
+
+cfg.hpt.selection_basis = ...
+    "Design-space screening and 54-scenario ranking sensitivity study";
 
 end
