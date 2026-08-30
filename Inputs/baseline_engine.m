@@ -2,13 +2,15 @@ function cfg = baseline_engine()
 %BASELINE_ENGINE Provisional inputs for a notional two-spool turbofan.
 % Values marked provisional will be replaced or justified using public
 % literature before final analysis.
+% Automatic Power Reserve (APR) identifies the accepted maximum-takeoff
+% design point. EDB identifies the ICAO Engine Emissions Databank.
 
 %% Metadata
 cfg.meta.name = ...
     "Notional CF34-10E-class two-spool separate-flow turbofan";
 
 cfg.meta.model_version = ...
-    "0.6-dev";
+    "0.6";
 
 cfg.meta.condition = ...
     "Maximum-takeoff APR design point, sea-level static";
@@ -17,7 +19,19 @@ cfg.meta.reference_engine = ...
     "GE CF34-10E class";
 
 cfg.meta.calibration_status = ...
-    "v0.5 APR calibration retained; multi-point calibration in progress";
+    "Validated APR design point; bounded EDB multipoint study retained as an infeasibility diagnostic";
+
+cfg.meta.release_status = ...
+    "Validated APR design-point engine deck";
+
+cfg.meta.apr_regression_foundation = ...
+    "v0.5 accepted APR numerical baseline";
+
+cfg.meta.multipoint_status = ...
+    "Diagnostic feasibility study; no accepted EDB off-design calibration";
+
+cfg.meta.validation_scope = ...
+    "APR cycle and fixed effective nozzle areas only";
 
 cfg.meta.model_scope = ...
     "Public-data-calibrated notional model; not an exact proprietary reproduction";
@@ -108,7 +122,7 @@ cfg.eff.lpt_isentropic = 0.92;
 cfg.loss.core_nozzle_pressure_recovery = 0.98;
 cfg.loss.bypass_nozzle_pressure_recovery = 0.98;
 
-%% Fixed physical nozzle geometry
+%% Fixed effective nozzle geometry
 % Areas captured from the calibrated maximum-takeoff APR design point.
 % These are model-derived geometry values, not publicly reported CF34 data.
 cfg.geometry.core_nozzle_area_m2 = ...
@@ -118,10 +132,10 @@ cfg.geometry.bypass_nozzle_area_m2 = ...
     0.693714887;
 
 cfg.geometry.nozzle_area_source = ...
-    "Captured from calibrated v0.6-dev APR design point";
+    "Captured from accepted v0.5 APR design-point calibration";
 
 cfg.geometry.nozzle_area_status = ...
-    "Fixed geometry for future off-design matching";
+    "Fixed effective areas for APR validation and multipoint feasibility diagnostics";
 
 %% Mechanical efficiencies
 cfg.mech.hpt = 0.99;

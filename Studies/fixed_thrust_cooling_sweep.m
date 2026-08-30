@@ -64,7 +64,7 @@ try
         baselineResults.performance.net_thrust_N;
 
     baselineTIT_K = ...
-        cfgBase.engine.turbine_inlet_temperature_K;
+        cfgBase.engine.combustor_exit_temperature_K;
 
     fprintf("Zero-bleed target thrust: %.3f kN\n", ...
         targetThrust_N / 1000);
@@ -172,6 +172,9 @@ try
                     solverOptions);
             end
         end
+
+        cfg.engine.combustor_exit_temperature_K = ...
+            solvedTIT_K;
 
         cfg.engine.turbine_inlet_temperature_K = ...
             solvedTIT_K;
@@ -399,6 +402,7 @@ function residual_N = evaluate_thrust_residual( ...
     TIT_K, cfg, targetThrust_N)
 %EVALUATE_THRUST_RESIDUAL Evaluate thrust error for the TIT solver.
 
+cfg.engine.combustor_exit_temperature_K = TIT_K;
 cfg.engine.turbine_inlet_temperature_K = TIT_K;
 
 results = run_turbofan(cfg);

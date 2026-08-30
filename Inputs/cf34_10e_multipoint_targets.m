@@ -1,9 +1,9 @@
 function targets = cf34_10e_multipoint_targets()
-%CF34_10E_MULTIPOINT_TARGETS Public CF34-10E calibration targets.
+%CF34_10E_MULTIPOINT_TARGETS Public CF34-10E feasibility targets.
 %
 % This function consolidates publicly available CF34-10E7 rating and
-% ICAO Engine Emissions Databank information for a future multi-point
-% calibration. It intentionally separates directly reported values from
+% ICAO Engine Emissions Databank information for a bounded multipoint
+% feasibility study. It intentionally separates directly reported values from
 % values derived from a reported percentage of rated thrust.
 %
 % Primary ICAO EDB configuration:
@@ -23,7 +23,7 @@ function targets = cf34_10e_multipoint_targets()
 %   - EASA TCDS IM.E.021, Issue 06
 %   - GE Aerospace CF34 public product information
 %
-% This is public-data calibration material. It does not contain or claim
+% This is public-data feasibility material. It does not contain or claim
 % proprietary GE component maps, internal geometry, or cooling schedules.
 
 %% Metadata
@@ -86,7 +86,7 @@ targets.cycle.edb_rated_point.pressure_ratio = 27.3;
 targets.cycle.edb_rated_point.pedigree = ...
     "ICAO EDB UID 10GE133";
 
-%% Primary ICAO LTO calibration points
+%% Primary ICAO LTO feasibility targets
 ratedThrust_N = ...
     targets.ratings.normal_takeoff.thrust_N_edb;
 
@@ -116,10 +116,10 @@ thrustPedigree = [
 ];
 
 recommendedUse = [
-    "Calibration"
-    "Calibration"
-    "Calibration"
-    "Hold-out validation"
+    "Diagnostic feasibility target"
+    "Diagnostic feasibility target"
+    "Diagnostic feasibility target"
+    "Holdout"
 ];
 
 tsfc_g_kN_s = ...
@@ -242,7 +242,7 @@ targets.cruise.tsfc_g_kN_s = ...
     / (targets.units.lbf_to_N * 3600) ...
     * 1e6;
 targets.cruise.recommended_use = ...
-    "Hold-out validation after off-design matching";
+    "Holdout";
 targets.cruise.pedigree = ...
     "GE public CF34-10E datasheet";
 

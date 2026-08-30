@@ -1,6 +1,9 @@
 function point = cf34_10e_operating_point(pointId)
 %CF34_10E_OPERATING_POINT Return one public-data calibration condition.
 %
+% Automatic Power Reserve (APR) identifies the inherited maximum-takeoff
+% design point. EDB identifies the ICAO Engine Emissions Databank.
+%
 % Usage:
 %   point = cf34_10e_operating_point("maximum_takeoff_apr");
 %   point = cf34_10e_operating_point("normal_takeoff_edb");
@@ -37,6 +40,9 @@ point.target_tsfc_g_kN_s = NaN;
 
 point.power_setting_percent_Foo = NaN;
 point.calibration_role = "";
+point.validation_status = "";
+point.quantity_classification = "";
+point.target_thrust_basis = "";
 point.ambient_basis = "";
 point.source = "";
 point.notes = "";
@@ -51,7 +57,16 @@ switch pointId
             targets.ratings.maximum_takeoff_apr.thrust_N;
 
         point.calibration_role = ...
-            "Inherited v0.5 design-point calibration";
+            "Validated APR design-point foundation";
+
+        point.validation_status = ...
+            "accepted_design_point";
+
+        point.quantity_classification = ...
+            "Externally sourced thrust target; calculated cycle response";
+
+        point.target_thrust_basis = ...
+            "Direct public maximum-takeoff-with-APR rating";
 
         point.ambient_basis = ...
             "Sea-level ISA reference condition";
@@ -60,7 +75,7 @@ switch pointId
             "EASA TCDS / GE public rating";
 
         point.notes = ...
-            "Flat-rated through 303.15 K; the initial reference run uses ISA sea level.";
+            "Maximum-takeoff APR rating; distinct from the normal-takeoff EDB configuration. Flat-rated through 303.15 K; the accepted reference run uses ISA sea level.";
 
     case "normal_takeoff_edb"
         point.name = ...
@@ -84,7 +99,16 @@ switch pointId
             1000 * mean(targets.edb.primary.ambient_pressure_range_kPa);
 
         point.calibration_role = ...
-            "Multi-point calibration";
+            "Multipoint feasibility-study target";
+
+        point.validation_status = ...
+            "diagnostic_feasibility_target";
+
+        point.quantity_classification = ...
+            "Externally sourced EDB rating and measured-data fuel flow";
+
+        point.target_thrust_basis = ...
+            "Direct EDB rated thrust Foo";
 
         point.ambient_basis = ...
             "Midpoint of reported EDB test-condition range";
@@ -93,7 +117,7 @@ switch pointId
             "ICAO EDB UID " + targets.edb.primary.uid;
 
         point.notes = ...
-            "Zero customer bleed and zero accessory power extraction.";
+            "UID 10GE133 normal-takeoff configuration; not the APR rating and not an accepted off-design prediction. Zero customer bleed and zero accessory power extraction.";
 
     case "climb_out_edb"
         point.name = ...
@@ -117,7 +141,16 @@ switch pointId
             1000 * mean(targets.edb.primary.ambient_pressure_range_kPa);
 
         point.calibration_role = ...
-            "Multi-point calibration";
+            "Multipoint feasibility-study target";
+
+        point.validation_status = ...
+            "diagnostic_feasibility_target";
+
+        point.quantity_classification = ...
+            "Externally sourced fuel flow; thrust derived from percent Foo";
+
+        point.target_thrust_basis = ...
+            "Derived as 85 percent of EDB rated thrust Foo";
 
         point.ambient_basis = ...
             "Midpoint of reported EDB test-condition range";
@@ -126,7 +159,7 @@ switch pointId
             "ICAO EDB UID " + targets.edb.primary.uid;
 
         point.notes = ...
-            "Thrust is derived from 85 percent of rated Foo.";
+            "Diagnostic target only. Thrust is derived from 85 percent of rated Foo and is not an independently measured net-thrust value at the modeled midpoint ambient condition.";
 
     case "approach_edb"
         point.name = ...
@@ -150,7 +183,16 @@ switch pointId
             1000 * mean(targets.edb.primary.ambient_pressure_range_kPa);
 
         point.calibration_role = ...
-            "Multi-point calibration";
+            "Multipoint feasibility-study target";
+
+        point.validation_status = ...
+            "diagnostic_feasibility_target";
+
+        point.quantity_classification = ...
+            "Externally sourced fuel flow; thrust derived from percent Foo";
+
+        point.target_thrust_basis = ...
+            "Derived as 30 percent of EDB rated thrust Foo";
 
         point.ambient_basis = ...
             "Midpoint of reported EDB test-condition range";
@@ -159,7 +201,7 @@ switch pointId
             "ICAO EDB UID " + targets.edb.primary.uid;
 
         point.notes = ...
-            "Thrust is derived from 30 percent of rated Foo.";
+            "Diagnostic target only. Thrust is derived from 30 percent of rated Foo and is not an independently measured net-thrust value at the modeled midpoint ambient condition.";
 
     case "idle_edb"
         point.name = ...
@@ -185,6 +227,15 @@ switch pointId
         point.calibration_role = ...
             "Hold-out validation";
 
+        point.validation_status = ...
+            "holdout";
+
+        point.quantity_classification = ...
+            "Externally sourced fuel flow; thrust derived from percent Foo";
+
+        point.target_thrust_basis = ...
+            "Derived as 7 percent of EDB rated thrust Foo";
+
         point.ambient_basis = ...
             "Midpoint of reported EDB test-condition range";
 
@@ -203,6 +254,15 @@ switch pointId
 
         point.calibration_role = ...
             "Hold-out validation";
+
+        point.validation_status = ...
+            "holdout";
+
+        point.quantity_classification = ...
+            "Externally sourced rating";
+
+        point.target_thrust_basis = ...
+            "Direct public maximum-continuous rating";
 
         point.ambient_basis = ...
             "Sea-level ISA reference condition";
@@ -228,6 +288,15 @@ switch pointId
 
         point.calibration_role = ...
             "Hold-out validation";
+
+        point.validation_status = ...
+            "holdout";
+
+        point.quantity_classification = ...
+            "Externally sourced cruise TSFC target";
+
+        point.target_thrust_basis = ...
+            "No thrust target; TSFC holdout only";
 
         point.ambient_basis = ...
             "ISA atmosphere at reported altitude";

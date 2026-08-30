@@ -20,7 +20,7 @@ bleedFractions = linspace(0.00, 0.10, 21);
 numberOfCases = numel(bleedFractions);
 
 fixedTIT_K = ...
-    cfgBase.engine.turbine_inlet_temperature_K;
+    cfgBase.engine.combustor_exit_temperature_K;
 
 caseTag = "fixedTIT";
 
