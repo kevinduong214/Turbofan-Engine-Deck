@@ -1,12 +1,7 @@
 function summary = test_cf34_multipoint_matcher()
 %TEST_CF34_MULTIPOINT_MATCHER Verify the expected no-exact-solution diagnosis.
-%
-% This focused test evaluates the reduced-order, steady-state,
-% fixed-nozzle-area multipoint matcher as a bounded diagnostic feasibility
-% tool. Automatic Power Reserve (APR) is
-% retained as the inherited design point. Only the normal-takeoff,
-% climb-out, and approach points from the ICAO Engine Emissions Databank
-% (EDB) are investigated.
+% The bounded diagnostic preserves Automatic Power Reserve (APR) and examines
+% three ICAO Engine Emissions Databank (EDB) targets without accepting them.
 
 clc;
 

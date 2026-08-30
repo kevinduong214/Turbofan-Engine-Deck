@@ -1,21 +1,8 @@
 function point = cf34_10e_operating_point(pointId)
-%CF34_10E_OPERATING_POINT Return one public-data calibration condition.
-%
+%CF34_10E_OPERATING_POINT Return one public-data operating condition.
 % Automatic Power Reserve (APR) identifies the inherited maximum-takeoff
-% design point. EDB identifies the ICAO Engine Emissions Databank.
-%
-% Usage:
-%   point = cf34_10e_operating_point("maximum_takeoff_apr");
-%   point = cf34_10e_operating_point("normal_takeoff_edb");
-%   point = cf34_10e_operating_point("climb_out_edb");
-%   point = cf34_10e_operating_point("approach_edb");
-%   point = cf34_10e_operating_point("idle_edb");
-%   point = cf34_10e_operating_point("maximum_continuous");
-%   point = cf34_10e_operating_point("cruise_holdout");
-%
-% This function defines external operating conditions and public targets.
-% It does not prescribe component pressure ratios, efficiencies, corrected
-% flows, spool speeds, fuel schedules, or internal cooling flow.
+% design point; EDB denotes the ICAO Engine Emissions Databank. Definitions
+% contain external conditions and targets, not off-design component behavior.
 
 targets = cf34_10e_multipoint_targets();
 

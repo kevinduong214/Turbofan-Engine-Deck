@@ -1,9 +1,7 @@
 function cfg = baseline_engine()
-%BASELINE_ENGINE Provisional inputs for a notional two-spool turbofan.
-% Values marked provisional will be replaced or justified using public
-% literature before final analysis.
-% Automatic Power Reserve (APR) identifies the accepted maximum-takeoff
-% design point. EDB identifies the ICAO Engine Emissions Databank.
+%BASELINE_ENGINE Inputs for the validated notional CF34-10E-class APR deck.
+% Automatic Power Reserve (APR) is the accepted maximum-takeoff design point;
+% EDB denotes the ICAO Engine Emissions Databank diagnostic data.
 
 %% Metadata
 cfg.meta.name = ...
@@ -40,7 +38,7 @@ cfg.meta.development_branch = ...
     "cf34-10e-multipoint-calibration";
 
 %% Reference-engine architecture
-% Public CF34-10E architecture used to interpret the lumped components.
+% Public architecture used to interpret the lumped cycle components.
 cfg.architecture.spool_count = 2;
 
 cfg.architecture.fan_stage_count = 1;
@@ -78,21 +76,16 @@ cfg.reference.description = ...
     "Standard-day reference for dimensional corrected flow and speed";
 
 %% Engine cycle parameters
-% Core airflow calibrated to reproduce the public CF34-10E7
-% maximum-takeoff sea-level-static thrust target.
-%
-% This is a model calibration result, not a publicly reported CF34 value.
+% Calibrated model value for the public maximum-takeoff SLS thrust target;
+% it is not a publicly reported CF34 airflow.
 cfg.engine.core_airflow_kg_s = 43.03;
 
-% Public CF34-10E bypass ratio.
+% Public maximum engine-level targets.
 cfg.engine.bypass_ratio = 5.4;
 
-% Public maximum overall pressure ratio.
 cfg.engine.target_overall_pressure_ratio = 29.0;
 
-% The individual component pressure-ratio split is not publicly verified.
-% Fan and LPC pressure ratios remain assumptions; HPC pressure ratio is
-% calculated so their product exactly satisfies the public overall ratio.
+% The assumed component split is constrained to the public overall ratio.
 cfg.engine.fan_pressure_ratio = 1.60;
 cfg.engine.lpc_pressure_ratio = 1.80;
 
@@ -101,10 +94,10 @@ cfg.engine.hpc_pressure_ratio = ...
     / (cfg.engine.fan_pressure_ratio ...
     * cfg.engine.lpc_pressure_ratio);
 
-% Modeled combustor exit temperature; not a publicly reported CF34 value.
+% Modeled combustor exit temperature; not a public CF34 value.
 cfg.engine.combustor_exit_temperature_K = 1600;
 
-% Temporary legacy alias while existing scripts are being renamed.
+% Compatibility alias; combustor_exit_temperature_K is authoritative.
 cfg.engine.turbine_inlet_temperature_K = ...
     cfg.engine.combustor_exit_temperature_K;
 
@@ -150,28 +143,11 @@ cfg.loss.core_duct_pressure_ratio = 0.99;
 cfg.fuel.lower_heating_value_J_kg = 43.0e6;
 
 %% HPT cooling-bleed fraction
-% Fraction of HPC exit air extracted before the combustor and returned
-% to the core flow immediately upstream of the HPT.
-%
-% beta_cool = mdot_coolant / mdot_core
-%
-% Examples:
-%   0.00 = uncooled reference case
-%   0.05 = 5% cooling-bleed case
+% beta_cool = mdot_coolant/mdot_core; coolant returns before the HPT.
 cfg.cooling.bleed_fraction = 0.05;
 
 %% Cooling-mixer pressure-loss model
-% Provisional correlation:
-%
-%   delta_Pt / Pt = K_mix * beta_cool^2
-%
-% where beta_cool is expressed as a decimal fraction.
-%
-% With K_mix = 1:
-%   beta_cool = 0.05 -> 0.25% total-pressure loss
-%   beta_cool = 0.10 -> 1.00% total-pressure loss
-%
-% This correlation will be refined or justified using public literature.
+% Assumed correlation: delta_Pt/Pt = K_mix*beta_cool^2.
 cfg.loss.cooling_mixer_loss_coefficient = 1.0;
 
 %% Shaft speeds
@@ -188,16 +164,12 @@ cfg.shaft.speed_status = ...
     "Provisional mean-line sizing inputs";
 
 %% Preliminary HPT stage-design assumptions
-% These are provisional mean-line design parameters. They will be refined
-% and justified using public turbine-design literature in the report.
 
 cfg.hpt.stage_count = ...
 cfg.architecture.hpt_stage_count;
 
-% Preliminary one-stage HPT mean-line design selected through a
-% psi-phi design-space sweep and 54-scenario sensitivity analysis.
-%
-% These are modeled design coefficients, not publicly reported CF34 data.
+% Modeled coefficients selected by psi-phi screening and sensitivity analysis;
+% they are not publicly reported CF34 data.
 cfg.hpt.loading_coefficient = 1.20;
 cfg.hpt.flow_coefficient = 0.45;
 cfg.hpt.reaction = 0.50;

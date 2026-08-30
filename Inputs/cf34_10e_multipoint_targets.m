@@ -1,30 +1,12 @@
 function targets = cf34_10e_multipoint_targets()
 %CF34_10E_MULTIPOINT_TARGETS Public CF34-10E feasibility targets.
-%
-% This function consolidates publicly available CF34-10E7 rating and
-% ICAO Engine Emissions Databank information for a bounded multipoint
-% feasibility study. It intentionally separates directly reported values from
-% values derived from a reported percentage of rated thrust.
-%
-% Primary ICAO EDB configuration:
-%   UID 10GE133
-%   CF34-10E7
-%   2253M21 combustor
-%   Block 2 production configuration
-%
-% The EDB records report fuel flow at four ICAO LTO power settings. The
-% climb-out, approach, and idle thrust targets below are derived from the
-% reported percentage of the 83.7 kN rated thrust, not independently
-% reported thrust measurements.
-%
-% Public sources:
-%   - EASA ICAO Aircraft Engine Emissions Databank, March 2026
-%   - ICAO EDB datasheets 10GE133, 11GE146, 8GE119, and 11GE147
-%   - EASA TCDS IM.E.021, Issue 06
-%   - GE Aerospace CF34 public product information
-%
-% This is public-data feasibility material. It does not contain or claim
-% proprietary GE component maps, internal geometry, or cooling schedules.
+% Automatic Power Reserve (APR) ratings and ICAO Engine Emissions Databank
+% (EDB) data are separated by pedigree. Primary data are UID 10GE133,
+% CF34-10E7, 2253M21 combustor, Block 2 configuration.
+% Fuel flows are reported; sub-rated thrust targets are derived from percent
+% Foo and are not independent measurements. Sources are the March 2026 EDB,
+% cited EDB datasheets, EASA TCDS IM.E.021, and GE public information.
+% No proprietary maps, internal geometry, or control schedules are implied.
 
 %% Metadata
 targets.metadata.engine_family = "GE CF34";
@@ -40,7 +22,7 @@ targets.units.lbf_to_N = 4.4482216152605;
 targets.units.ft_to_m = 0.3048;
 
 %% Certified and public engine ratings
-% Maximum takeoff with automatic power reserve (APR).
+% Maximum takeoff with Automatic Power Reserve (APR).
 targets.ratings.maximum_takeoff_apr.name = ...
     "Maximum takeoff with APR";
 targets.ratings.maximum_takeoff_apr.thrust_lbf = 20360;
@@ -52,7 +34,7 @@ targets.ratings.maximum_takeoff_apr.flat_rating_temperature_K = ...
 targets.ratings.maximum_takeoff_apr.pedigree = ...
     "Publicly reported TCDS rating";
 
-% Normal takeoff rating used as Foo by the ICAO EDB record.
+% Normal takeoff rating used as Foo by the EDB record.
 targets.ratings.normal_takeoff.name = ...
     "Normal takeoff / ICAO rated thrust";
 targets.ratings.normal_takeoff.thrust_kN_tcds = 83.72;
@@ -80,7 +62,7 @@ targets.cycle.public_maximum.overall_pressure_ratio = 29.0;
 targets.cycle.public_maximum.pedigree = ...
     "GE public maximum engine-level values";
 
-% Values reported by the primary ICAO EDB record at the rated point.
+% Primary EDB rated-point values.
 targets.cycle.edb_rated_point.bypass_ratio = 5.09;
 targets.cycle.edb_rated_point.pressure_ratio = 27.3;
 targets.cycle.edb_rated_point.pedigree = ...

@@ -1,36 +1,14 @@
 function match = match_cf34_multipoint(cfgApr, diagnosticOptions)
 %MATCH_CF34_MULTIPOINT Diagnose three public CF34-10E feasibility targets.
-%
-% This bounded reduced-order, steady-state, fixed-nozzle-area multipoint
-% matcher is a diagnostic feasibility tool. It is not an accepted
-% off-design model or control schedule. The diagnostic
-% preserves the inherited Automatic Power Reserve (APR) design-point
-% configuration and investigates only the normal-takeoff, climb-out, and approach
-% points from the ICAO Engine Emissions Databank (EDB).
-%
-% Four effective operating quantities are adjusted at each fitted point:
-%
-%   - core airflow
-%   - effective bypass ratio
-%   - effective overall pressure ratio
-%   - combustor exit temperature
-%
-% The effective overall pressure ratio is distributed among the fan, LPC,
-% and HPC using the APR logarithmic pressure-rise fractions. These values
-% are diagnostic effective operating values. They are not proprietary CF34 maps,
-% verified control schedules, or detailed component reconstructions.
-%
-% The four normalized matching residuals are net thrust, fuel flow, core
-% nozzle capacity, and bypass nozzle capacity. The existing run_turbofan
-% function remains the cycle evaluator and both nozzle areas remain fixed.
-% Failure to close the residuals within the stated bounds is retained and
-% reported as the intended feasibility-study result. This bounded
-% multistart local diagnostic does not constitute a global proof that no
-% exact root exists.
-%
-% An optional diagnosticOptions struct may reduce the fminsearch iteration
-% or function-evaluation budgets for solver-status testing. It does not
-% alter model inputs, bounds, residual definitions, or cycle physics.
+% This reduced-order, steady-state, fixed-nozzle-area matcher preserves the
+% Automatic Power Reserve (APR) design point and diagnoses normal takeoff,
+% climb-out, and approach targets from the ICAO Engine Emissions Databank
+% (EDB). It is not an accepted off-design model or control schedule.
+% Effective core flow, bypass ratio, overall pressure ratio, and combustor
+% exit temperature minimize thrust, fuel-flow, and nozzle-capacity residuals.
+% APR logarithmic pressure-rise fractions define the component split.
+% Bounded deterministic local searches do not prove global infeasibility.
+% diagnosticOptions may change solver budgets only.
 
 validateattributes(cfgApr, {'struct'}, {'scalar'});
 
@@ -78,8 +56,7 @@ numberPoints = numel(pointIds);
 
 exactSolutionTolerance = 5e-5;
 
-% Bounds apply only to the fitted EDB points. The APR design point is never
-% passed through the optimizer and therefore remains numerically unchanged.
+% Bounds apply only to EDB diagnostics; APR is not optimized.
 lowerBounds = [ ...
     5.0, ...       % core airflow, kg/s
     2.0, ...       % effective bypass ratio

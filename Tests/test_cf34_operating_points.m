@@ -1,9 +1,6 @@
 function summary = test_cf34_operating_points()
-%TEST_CF34_OPERATING_POINTS Smoke-test public operating-point definitions.
-%
-% This test verifies operating-point metadata and ambient-condition routing.
-% It intentionally runs the full cycle only at the inherited APR baseline,
-% because generic off-design matching has not yet been implemented.
+%TEST_CF34_OPERATING_POINTS Verify point metadata and ambient routing.
+% Only the accepted APR point is evaluated as a production cycle result.
 
 clc;
 

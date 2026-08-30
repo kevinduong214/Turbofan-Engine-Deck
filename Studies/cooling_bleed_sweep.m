@@ -5,7 +5,6 @@ clc;
 close all;
 
 %% Project paths
-% This script is stored inside the Studies folder.
 studyFolder = fileparts(mfilename("fullpath"));
 projectRoot = fileparts(studyFolder);
 
@@ -99,7 +98,6 @@ try
     coreExitVelocity_m_s = ...
         zeros(numberOfCases, 1);
 
-    % Preserve the complete results structure from every sweep point.
     caseResults = ...
         cell(numberOfCases, 1);
 
@@ -352,10 +350,8 @@ axList = findall(figHandle, "Type", "axes");
 for i = 1:numel(axList)
     ax = axList(i);
 
-    % White plot area
     ax.Color = "w";
 
-    % Dark axes/ticks
     ax.XColor = "k";
     ax.YColor = "k";
 
@@ -363,19 +359,16 @@ for i = 1:numel(axList)
         ax.ZColor = "k";
     end
 
-    % Titles and labels
     ax.Title.Color = "k";
     ax.XLabel.Color = "k";
     ax.YLabel.Color = "k";
 
-    % If yyaxis is used, force both y-axes dark
     if isprop(ax, "YAxis") && numel(ax.YAxis) > 1
         for j = 1:numel(ax.YAxis)
             ax.YAxis(j).Color = "k";
         end
     end
 
-    % Grid appearance
     ax.GridColor = [0.75 0.75 0.75];
     ax.GridAlpha = 0.35;
 
@@ -390,7 +383,6 @@ for i = 1:numel(axList)
     ax.Box = "on";
 end
 
-% Legends
 legendList = findall(figHandle, "Type", "legend");
 
 for i = 1:numel(legendList)
@@ -400,7 +392,6 @@ for i = 1:numel(legendList)
     lgd.EdgeColor = [0.25 0.25 0.25];
 end
 
-% Any extra text objects
 textList = findall(figHandle, "Type", "text");
 
 for i = 1:numel(textList)

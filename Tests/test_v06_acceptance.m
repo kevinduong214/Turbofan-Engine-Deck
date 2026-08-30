@@ -1,16 +1,8 @@
 function summary = test_v06_acceptance()
 %TEST_V06_ACCEPTANCE APR release checks for turbofan model v0.6.
-%
-% The accepted v0.5 Automatic Power Reserve (APR) numerical regression is
-% retained as the foundation of v0.6. Multipoint EDB feasibility is tested
-% separately by test_cf34_multipoint_matcher.
-%
-% Run from MATLAB with:
-%
-%   test_v06_acceptance
-%
-% The test executes the active baseline configuration directly. It does
-% not create Data or Figures run folders and does not modify model inputs.
+% The accepted v0.5 Automatic Power Reserve (APR) regression remains the
+% numerical foundation. EDB diagnostics are tested separately. No outputs
+% or model inputs are written.
 
 clc;
 

@@ -167,9 +167,7 @@ station19 = nozzle( ...
     cfg.thermo.R_J_kgK);
 
 %% Fixed-area nozzle capacity diagnostics
-% The cycle still prescribes stream mass flow. These diagnostics calculate
-% the flow supported by the captured physical nozzle areas and expose the
-% residuals required by the future off-design matching solver.
+% Stream flow remains prescribed; capacity uses the fixed effective areas.
 
 coreNozzleCapacity = nozzle_fixed_area_capacity( ...
     station8, ...
